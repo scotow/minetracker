@@ -29,7 +29,10 @@ func OnlinePlayers(hostname string, port int, password string) ([]string, error)
 	if len(fields) != 2 {
 		return nil, ErrInvalidOutput
 	}
+	
+	fields[1] = strings.TrimSpace(fields[1])
 
+	fmt.Println(fields[1])
 	var count int
 	n, err := fmt.Sscanf(fields[0], "There are %d of a max %d players online", &count, new(int))
 	if err != nil {

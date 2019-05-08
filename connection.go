@@ -13,10 +13,10 @@ var (
 	ErrCountMismatch = errors.New("number of player parsed is not matching")
 )
 
-func OnlinePlayers(hostname string, port int, password string) ([]string, error) {
-	args := []string{"-c", "-H", hostname, "-P", strconv.Itoa(port)}
-	if password != "" {
-		args = append(args, "-p", password)
+func OnlinePlayers(cred Credentials) ([]string, error) {
+	args := []string{"-c", "-H", cred.hostname, "-P", strconv.Itoa(cred.port)}
+	if cred.password != "" {
+		args = append(args, "-p", cred.password)
 	}
 	args = append(args, "list")
 
@@ -29,10 +29,9 @@ func OnlinePlayers(hostname string, port int, password string) ([]string, error)
 	if len(fields) != 2 {
 		return nil, ErrInvalidOutput
 	}
-	
+
 	fields[1] = strings.TrimSpace(fields[1])
 
-	fmt.Println(fields[1])
 	var count int
 	n, err := fmt.Sscanf(fields[0], "There are %d of a max %d players online", &count, new(int))
 	if err != nil {

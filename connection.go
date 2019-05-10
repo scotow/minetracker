@@ -25,7 +25,7 @@ func OnlinePlayers(cred Credentials) ([]string, error) {
 		return nil, err
 	}
 
-	fields := strings.Split(string(data), ": ")
+	fields := strings.Split(string(data), ":")
 	if len(fields) != 2 {
 		return nil, ErrInvalidOutput
 	}
@@ -39,6 +39,10 @@ func OnlinePlayers(cred Credentials) ([]string, error) {
 	}
 	if n != 2 {
 		return nil, ErrInvalidOutput
+	}
+
+	if fields[1] == "" {
+		return []string{}, nil
 	}
 
 	players := strings.Split(fields[1], ",")

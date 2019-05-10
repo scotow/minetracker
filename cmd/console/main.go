@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/scotow/skyblocktracker"
 	"os"
-	"strings"
 	"time"
+
+	. "github.com/scotow/skyblocktracker"
 )
 
 var (
@@ -25,19 +25,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	cred := skyblocktracker.Credentials{Hostname: *flagHostname, Port: *flagPort, Password: *flagPassword}
-	tracker := skyblocktracker.NewTracker(cred, *flagInterval, func(online, connect, disconnect []string) {
-		if *flagSelf != "" && skyblocktracker.Contains(online, *flagSelf) {
-			return
-		}
-
-		if len(connect) > 0 {
-			fmt.Printf("%s connected.\n", formatPlayerList(connect))
-		}
-		if len(disconnect) > 0 {
-			fmt.Printf("%s disconnected.\n", formatPlayerList(disconnect))
-		}
-	})
+	cred := Credentials{Hostname: *flagHostname, Port: *flagPort, Password: *flagPassword}
+	tracker := NewTracker(cred, *flagInterval, onChange)
 
 	report := make(chan error)
 	err := tracker.Start(report)
@@ -47,14 +36,21 @@ func main() {
 	checkError(err)
 }
 
-func formatPlayerList(players []string) string {
-	switch len(players) {
-	case 0:
-		return ""
-	case 1:
-		return players[0]
-	default:
-		return fmt.Sprintf("%s and %s", strings.Join(players[0:len(players)-1], ", "), players[len(players)-1])
+func onChange(online, connect, disconnect []string) {
+	if *flagSelf != "" {
+		if Contains(online, *flagSelf) {
+			return
+		}
+
+		connect = Remove(connect, *flagSelf)
+		disconnect = Remove(connect, *flagSelf)
+	}
+
+	if len(connect) > 0 {
+		fmt.Printf("%s connected.\n", FormatPlayerList(connect))
+	}
+	if len(disconnect) > 0 {
+		fmt.Printf("%s disconnected.\n", FormatPlayerList(disconnect))
 	}
 }
 

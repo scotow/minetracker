@@ -16,11 +16,11 @@ type Tracker struct {
 	report chan<- error
 }
 
-func NewTracker(cred Credentials, change TrackChange, interval time.Duration) *Tracker {
+func NewTracker(cred Credentials, interval time.Duration, change TrackChange) *Tracker {
 	t := new(Tracker)
 	t.cred = cred
-	t.change = change
 	t.interval = interval
+	t.change = change
 
 	return t
 }
@@ -64,19 +64,8 @@ func (t *Tracker) updateAndNotify() error {
 		return err
 	}
 
-	newConnect := make([]string, 0)
-	for _, player := range online {
-		if t.isNew(player) {
-			newConnect = append(newConnect, player)
-		}
-	}
-
-	newDisconnect := make([]string, 0)
-	for _, player := range t.last {
-		if t.wasConnected(player) {
-			newConnect = append(newConnect, player)
-		}
-	}
+	newConnect := FindNew(t.last, online)
+	newDisconnect := FindNew(online, t.last)
 
 	if len(newConnect)+len(newDisconnect) > 0 {
 		t.change(online, newConnect, newDisconnect)
@@ -84,22 +73,4 @@ func (t *Tracker) updateAndNotify() error {
 
 	t.last = online
 	return nil
-}
-
-func (t *Tracker) isNew(player string) bool {
-	for _, p := range t.last {
-		if p == player {
-			return false
-		}
-	}
-	return true
-}
-
-func (t *Tracker) wasConnected(player string) bool {
-	for _, p := range t.last {
-		if p == player {
-			return true
-		}
-	}
-	return false
 }

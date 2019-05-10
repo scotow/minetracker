@@ -14,7 +14,7 @@ var (
 	flagPort     = flag.Int("p", 0, "mcrcon server port")
 	flagPassword = flag.String("P", "", "mcrcon server password (optional)")
 	flagInterval = flag.Duration("i", time.Second*30, "checking interval")
-	flagSelf     = flag.String("s", "", "don't notify if this player is online")
+	flagSelf     = flag.String("s", "", "don't notify if this player is online or concerned")
 )
 
 func main() {

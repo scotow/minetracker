@@ -14,9 +14,9 @@ var (
 )
 
 func OnlinePlayers(cred Credentials) ([]string, error) {
-	args := []string{"-c", "-H", cred.hostname, "-P", strconv.Itoa(cred.port)}
-	if cred.password != "" {
-		args = append(args, "-p", cred.password)
+	args := []string{"-c", "-H", cred.Hostname, "-P", strconv.Itoa(cred.Port)}
+	if cred.Password != "" {
+		args = append(args, "-p", cred.Password)
 	}
 	args = append(args, "list")
 

@@ -52,7 +52,7 @@ func onChange(online, connect, disconnect []string) {
 		}
 
 		connect = Remove(connect, *flagSelf)
-		disconnect = Remove(connect, *flagSelf)
+		disconnect = Remove(disconnect, *flagSelf)
 	}
 
 	var lines []string

@@ -16,8 +16,8 @@ func FindNew(old, new []string) []string {
 }
 
 func Contains(ss []string, s string) bool {
-	for _, i := range ss {
-		if i == s {
+	for _, v := range ss {
+		if v == s {
 			return true
 		}
 	}

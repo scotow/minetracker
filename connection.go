@@ -45,7 +45,7 @@ func OnlinePlayers(cred Credentials) ([]string, error) {
 		return []string{}, nil
 	}
 
-	players := strings.Split(fields[1], ",")
+	players := strings.Split(fields[1], ", ")
 	if len(players) != count {
 		return nil, ErrCountMismatch
 	}

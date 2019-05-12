@@ -39,6 +39,10 @@ func (t *Tracker) Start(report chan<- error) error {
 	return nil
 }
 
+func (t *Tracker) Stop() {
+	t.stop <- struct{}{}
+}
+
 func (t *Tracker) startInterval() {
 	ticker := time.NewTicker(t.interval)
 
@@ -68,7 +72,7 @@ func (t *Tracker) updateAndNotify() error {
 	newDisconnect := FindNew(online, t.last)
 
 	if len(newConnect)+len(newDisconnect) > 0 {
-		t.change(online, newConnect, newDisconnect)
+		go t.change(online, newConnect, newDisconnect)
 	}
 
 	t.last = online

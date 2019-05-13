@@ -4,11 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
-	"github.com/scotow/notigo"
 	. "github.com/scotow/skyblocktracker"
+	. "github.com/scotow/skyblocktracker/notifier"
+	. "github.com/scotow/skyblocktracker/tracker"
 )
 
 var (
@@ -20,10 +20,6 @@ var (
 	flagNotigoKey = flag.String("k", "", "notigo key")
 )
 
-var (
-	key notigo.Key
-)
-
 func main() {
 	flag.Parse()
 
@@ -32,41 +28,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	key = notigo.Key(*flagNotigoKey)
-
-	cred := Credentials{Hostname: *flagHostname, Port: *flagPort, Password: *flagPassword}
-	tracker := NewTracker(cred, *flagInterval, onChange)
-
 	report := make(chan error)
-	err := tracker.Start(report)
+
+	server := NewServer(*flagHostname, *flagPort, *flagPassword, report)
+	notifier := NewNotigoNotifier(*flagNotigoKey, "Skyblock")
+	_ = server.Add(NewConnectionTracker(*flagSelf), notifier, *flagInterval)
+	_ = server.Add(NewEntityTracker("wandering_trader", "Wandering Trader"), notifier, *flagInterval)
+
+	err := <-report
 	checkError(err)
-
-	err = <-report
-	checkError(err)
-}
-
-func onChange(online, connect, disconnect []string) {
-	if *flagSelf != "" {
-		if Contains(online, *flagSelf) {
-			return
-		}
-
-		connect = Remove(connect, *flagSelf)
-		disconnect = Remove(disconnect, *flagSelf)
-	}
-
-	var lines []string
-	if len(connect) > 0 {
-		lines = append(lines, fmt.Sprintf("%s connected.", FormatPlayerList(connect)))
-	}
-	if len(disconnect) > 0 {
-		lines = append(lines, fmt.Sprintf("%s disconnected.", FormatPlayerList(disconnect)))
-	}
-
-	if len(lines) > 0 {
-		err := key.Send(notigo.NewNotification("Skyblock", strings.Join(lines, "\n")))
-		checkError(err)
-	}
 }
 
 func checkError(err error) {

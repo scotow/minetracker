@@ -7,6 +7,8 @@ import (
 	"time"
 
 	. "github.com/scotow/skyblocktracker"
+	. "github.com/scotow/skyblocktracker/notifier"
+	. "github.com/scotow/skyblocktracker/tracker"
 )
 
 var (
@@ -25,33 +27,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	cred := Credentials{Hostname: *flagHostname, Port: *flagPort, Password: *flagPassword}
-	tracker := NewTracker(cred, *flagInterval, onChange)
-
 	report := make(chan error)
-	err := tracker.Start(report)
+
+	server := NewServer(*flagHostname, *flagPort, *flagPassword, report)
+	notifier := NewConsoleNotifier()
+	_ = server.Add(NewConnectionTracker(*flagSelf), notifier, *flagInterval)
+
+	err := <-report
 	checkError(err)
-
-	err = <-report
-	checkError(err)
-}
-
-func onChange(online, connect, disconnect []string) {
-	if *flagSelf != "" {
-		if Contains(online, *flagSelf) {
-			return
-		}
-
-		connect = Remove(connect, *flagSelf)
-		disconnect = Remove(disconnect, *flagSelf)
-	}
-
-	if len(connect) > 0 {
-		fmt.Printf("%s connected.\n", FormatPlayerList(connect))
-	}
-	if len(disconnect) > 0 {
-		fmt.Printf("%s disconnected.\n", FormatPlayerList(disconnect))
-	}
 }
 
 func checkError(err error) {

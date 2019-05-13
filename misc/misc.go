@@ -1,4 +1,4 @@
-package skyblocktracker
+package misc
 
 import (
 	"fmt"

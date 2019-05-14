@@ -34,7 +34,7 @@ func (s *Server) RunCommand(cmd string) (string, error) {
 	if s.password != "" {
 		args = append(args, "-p", s.password)
 	}
-	args = append(args, "list")
+	args = append(args, cmd)
 
 	data, err := exec.Command("mcrcon", args...).Output()
 	if _, ok := err.(*exec.ExitError); !ok {
@@ -46,7 +46,7 @@ func (s *Server) RunCommand(cmd string) (string, error) {
 
 func (s *Server) Add(tracker Tracker, notifier Notifier, interval time.Duration) *Ticker {
 	ticker := NewTicker(s, tracker, notifier, interval)
-	ticker.Start(s.report)
+	go ticker.Start(s.report)
 
 	return ticker
 }

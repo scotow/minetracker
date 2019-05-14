@@ -25,29 +25,30 @@ type ConnectionTracker struct {
 	exclude string
 }
 
-func (c *ConnectionTracker) Command() string {
+func (ct *ConnectionTracker) Command() string {
 	return "list"
 }
 
-func (c *ConnectionTracker) Track(result string, notifier Notifier) error {
-	online, err := c.onlinePlayers(result)
+func (ct *ConnectionTracker) Track(result string, notifier Notifier) error {
+	online, err := parseOnlinePlayers(result)
 	if err != nil {
 		return err
 	}
 
-	newConnect := FindNew(c.last, online)
-	newDisconnect := FindNew(online, c.last)
+	newConnect := FindNew(ct.last, online)
+	newDisconnect := FindNew(online, ct.last)
 
-	c.last = online
+	ct.last = online
 
 	if len(newConnect)+len(newDisconnect) > 0 {
-		return c.parseAndNotify(online, newConnect, newDisconnect, notifier)
+		return ct.excludeAndNotify(online, newConnect, newDisconnect, notifier)
 	}
 
 	return nil
 }
 
-func (c *ConnectionTracker) onlinePlayers(data string) ([]string, error) {
+// TODO: Move this helper func to misc.
+func parseOnlinePlayers(data string) ([]string, error) {
 	fields := strings.Split(data, ":")
 	if len(fields) != 2 {
 		return nil, ErrInvalidOutput
@@ -76,14 +77,14 @@ func (c *ConnectionTracker) onlinePlayers(data string) ([]string, error) {
 	return players, nil
 }
 
-func (c *ConnectionTracker) parseAndNotify(online, connect, disconnect []string, notifier Notifier) error {
-	if c.exclude != "" {
-		if Contains(online, c.exclude) {
+func (ct *ConnectionTracker) excludeAndNotify(online, connect, disconnect []string, notifier Notifier) error {
+	if ct.exclude != "" {
+		if Contains(online, ct.exclude) {
 			return nil
 		}
 
-		connect = Remove(connect, c.exclude)
-		disconnect = Remove(disconnect, c.exclude)
+		connect = Remove(connect, ct.exclude)
+		disconnect = Remove(disconnect, ct.exclude)
 	}
 
 	var lines []string

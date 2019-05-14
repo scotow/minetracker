@@ -1,36 +1,37 @@
 package tracker
 
 import (
-	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	. "github.com/scotow/skyblocktracker/misc"
 	. "github.com/scotow/skyblocktracker/notifier"
 )
 
-var (
-	ErrInvalidOutput = errors.New("output doesn't match expected format")
-	ErrCountMismatch = errors.New("number of player parsed is not matching")
-)
-
-func NewConnectionTracker(exclude string) *ConnectionTracker {
+func NewConnectionTracker(exclude string, interval time.Duration) *ConnectionTracker {
 	ct := new(ConnectionTracker)
 	ct.exclude = exclude
+	ct.interval = interval
 	return ct
 }
 
 type ConnectionTracker struct {
-	last    []string
-	exclude string
+	last     []string
+	exclude  string
+	interval time.Duration
 }
 
 func (ct *ConnectionTracker) Command() string {
 	return "list"
 }
 
+func (ct *ConnectionTracker) Wait() time.Duration {
+	return ct.interval
+}
+
 func (ct *ConnectionTracker) Track(result string, notifier Notifier) error {
-	online, err := parseOnlinePlayers(result)
+	online, err := ParseOnlinePlayers(result)
 	if err != nil {
 		return err
 	}
@@ -45,36 +46,6 @@ func (ct *ConnectionTracker) Track(result string, notifier Notifier) error {
 	}
 
 	return nil
-}
-
-// TODO: Move this helper func to misc.
-func parseOnlinePlayers(data string) ([]string, error) {
-	fields := strings.Split(data, ":")
-	if len(fields) != 2 {
-		return nil, ErrInvalidOutput
-	}
-
-	fields[1] = strings.TrimSpace(fields[1])
-
-	var count int
-	n, err := fmt.Sscanf(fields[0], "There are %d of a max %d players online", &count, new(int))
-	if err != nil {
-		return nil, err
-	}
-	if n != 2 {
-		return nil, ErrInvalidOutput
-	}
-
-	if fields[1] == "" {
-		return []string{}, nil
-	}
-
-	players := strings.Split(fields[1], ", ")
-	if len(players) != count {
-		return nil, ErrCountMismatch
-	}
-
-	return players, nil
 }
 
 func (ct *ConnectionTracker) excludeAndNotify(online, connect, disconnect []string, notifier Notifier) error {

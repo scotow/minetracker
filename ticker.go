@@ -12,17 +12,15 @@ type Ticker struct {
 	tracker  Tracker
 	notifier Notifier
 
-	interval time.Duration
-	stop     chan struct{}
-	report   chan<- error
+	stop   chan struct{}
+	report chan<- error
 }
 
-func NewTicker(runner Runner, tracker Tracker, notifier Notifier, interval time.Duration) *Ticker {
+func NewTicker(runner Runner, tracker Tracker, notifier Notifier) *Ticker {
 	t := new(Ticker)
 	t.runner = runner
 	t.tracker = tracker
 	t.notifier = notifier
-	t.interval = interval
 	return t
 }
 
@@ -31,19 +29,17 @@ func (t *Ticker) Start(report chan<- error) {
 	t.report = report
 
 	go func() {
-		ticker := time.NewTicker(t.interval)
-
 		for {
 			select {
-			case <-ticker.C:
+			case <-time.After(t.tracker.Wait()):
 				err := t.tick()
 				if err != nil {
-					ticker.Stop()
-					t.report <- err
+					if t.report != nil {
+						t.report <- err
+					}
 					return
 				}
 			case <-t.stop:
-				ticker.Stop()
 				return
 			}
 		}

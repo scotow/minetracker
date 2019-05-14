@@ -1,8 +1,14 @@
 package misc
 
 import (
+	"errors"
 	"fmt"
 	"strings"
+)
+
+var (
+	ErrInvalidOutput = errors.New("output doesn't match expected format")
+	ErrCountMismatch = errors.New("number of player parsed is not matching")
 )
 
 func FindNew(old, new []string) []string {
@@ -42,4 +48,33 @@ func FormatPlayerList(players []string) string {
 	default:
 		return fmt.Sprintf("%s and %s", strings.Join(players[0:len(players)-1], ", "), players[len(players)-1])
 	}
+}
+
+func ParseOnlinePlayers(data string) ([]string, error) {
+	fields := strings.Split(data, ":")
+	if len(fields) != 2 {
+		return nil, ErrInvalidOutput
+	}
+
+	fields[1] = strings.TrimSpace(fields[1])
+
+	var count int
+	n, err := fmt.Sscanf(fields[0], "There are %d of a max %d players online", &count, new(int))
+	if err != nil {
+		return nil, err
+	}
+	if n != 2 {
+		return nil, ErrInvalidOutput
+	}
+
+	if fields[1] == "" {
+		return []string{}, nil
+	}
+
+	players := strings.Split(fields[1], ", ")
+	if len(players) != count {
+		return nil, ErrCountMismatch
+	}
+
+	return players, nil
 }

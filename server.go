@@ -3,7 +3,6 @@ package skyblocktracker
 import (
 	"os/exec"
 	"strconv"
-	"time"
 
 	. "github.com/scotow/skyblocktracker/notifier"
 	. "github.com/scotow/skyblocktracker/tracker"
@@ -44,8 +43,8 @@ func (s *Server) RunCommand(cmd string) (string, error) {
 	return string(data), nil
 }
 
-func (s *Server) Add(tracker Tracker, notifier Notifier, interval time.Duration) *Ticker {
-	ticker := NewTicker(s, tracker, notifier, interval)
+func (s *Server) Add(tracker Tracker, notifier Notifier) *Ticker {
+	ticker := NewTicker(s, tracker, notifier)
 	ticker.Start(s.report)
 
 	return ticker

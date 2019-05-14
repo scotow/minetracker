@@ -31,7 +31,7 @@ func main() {
 
 	server := NewServer(*flagHostname, *flagPort, *flagPassword, report)
 	notifier := NewConsoleNotifier()
-	_ = server.Add(NewConnectionTracker(*flagSelf), notifier, *flagInterval)
+	_ = server.Add(NewConnectionTracker(*flagSelf, *flagInterval), notifier)
 
 	err := <-report
 	checkError(err)

@@ -46,7 +46,7 @@ func (s *Server) RunCommand(cmd string) (string, error) {
 
 func (s *Server) Add(tracker Tracker, notifier Notifier, interval time.Duration) *Ticker {
 	ticker := NewTicker(s, tracker, notifier, interval)
-	go ticker.Start(s.report)
+	ticker.Start(s.report)
 
 	return ticker
 }

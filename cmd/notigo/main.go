@@ -41,12 +41,6 @@ func main() {
 	}
 
 	err := <-report
-	checkError(err)
-}
-
-func checkError(err error) {
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
+	fmt.Println(err.Error())
+	os.Exit(1)
 }

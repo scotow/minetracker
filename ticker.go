@@ -11,9 +11,7 @@ type Ticker struct {
 	runner   Runner
 	tracker  Tracker
 	notifier Notifier
-
 	stop   chan struct{}
-	report chan<- error
 }
 
 func NewTicker(runner Runner, tracker Tracker, notifier Notifier) *Ticker {
@@ -26,7 +24,6 @@ func NewTicker(runner Runner, tracker Tracker, notifier Notifier) *Ticker {
 
 func (t *Ticker) Start(report chan<- error) {
 	t.stop = make(chan struct{})
-	t.report = report
 
 	go func() {
 		for {
@@ -34,8 +31,8 @@ func (t *Ticker) Start(report chan<- error) {
 			case <-time.After(t.tracker.Wait()):
 				err := t.tick()
 				if err != nil {
-					if t.report != nil {
-						t.report <- err
+					if report != nil {
+						report <- err
 					}
 					return
 				}

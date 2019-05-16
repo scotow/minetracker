@@ -23,7 +23,7 @@ var (
 	flagConnKey      = flag.String("k", "", "notigo key(s) for connections")
 
 	flagEntityInterval = flag.Duration("I", time.Second*30, "checking interval for entity")
-	flagWait           = flag.Duration("w", time.Hour, "waiting interval")
+	flagEntityWait     = flag.Duration("w", time.Hour, "waiting interval")
 	flagEntityId       = flag.String("e", "", "entity id")
 	flagEntityName     = flag.String("E", "", "entity name")
 	flagEntityKey      = flag.String("K", "", "notigo key(s) for entity")
@@ -42,24 +42,16 @@ func main() {
 
 	hasTracker := false
 	if *flagConnInterval > 0 && *flagConnKey != "" {
-		connNotifier := NewNotigoNotifier(*flagConnKey, *flagTitle)
-		_ = server.Add(NewConnectionTracker(*flagConnSelf, *flagConnInterval), connNotifier)
+		_ = server.Add(NewConnectionTracker(*flagConnSelf, *flagConnInterval), parseKeys(*flagConnKey))
 		hasTracker = true
 	}
-	if *flagEntityInterval > 0 && *flagWait > 0 && *flagEntityId != "" && *flagEntityName != "" && *flagEntityKey != "" {
-		keys := strings.Split(*flagEntityKey, ",")
-		notifiers := make([]Notifier, len(keys))
-		for i, v := range keys {
-			notifiers[i] = NewNotigoNotifier(v, *flagTitle)
-		}
-
-		entityNotifier := NewMultiNotifier(notifiers...)
+	if *flagEntityInterval > 0 && *flagEntityWait > 0 && *flagEntityId != "" && *flagEntityName != "" && *flagEntityKey != "" {
 		if hasTracker {
 			time.Sleep(time.Second * 5)
 		} else {
 			hasTracker = true
 		}
-		_ = server.Add(NewEntityTracker(*flagEntityId, *flagEntityName, *flagEntityInterval, *flagWait), entityNotifier)
+		_ = server.Add(NewEntityTracker(*flagEntityId, *flagEntityName, *flagEntityInterval, *flagEntityWait), parseKeys(*flagEntityKey))
 	}
 
 	if !hasTracker {
@@ -70,4 +62,14 @@ func main() {
 	err := <-report
 	fmt.Println(err.Error())
 	os.Exit(1)
+}
+
+func parseKeys(data string) *MultiNotifier {
+	keys := strings.Split(data, ",")
+	notifiers := make([]Notifier, len(keys))
+	for i, v := range keys {
+		notifiers[i] = NewNotigoNotifier(v, *flagTitle)
+	}
+
+	return NewMultiNotifier(notifiers...)
 }

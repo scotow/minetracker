@@ -4,8 +4,6 @@ import (
 	"os/exec"
 	"strconv"
 	"sync"
-
-	. "github.com/scotow/skyblocktracker"
 )
 
 var (

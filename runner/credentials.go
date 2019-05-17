@@ -1,4 +1,4 @@
-package skyblocktracker
+package runner
 
 type Credentials struct {
 	Hostname string

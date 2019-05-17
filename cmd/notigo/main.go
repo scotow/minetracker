@@ -40,7 +40,10 @@ func main() {
 
 	report := make(chan error)
 	cred := Credentials{Hostname: *flagHostname, Port: *flagPort, Password: *flagPassword}
-	runner := NewMcrcon(cred)
+	runner, err := NewDirect(cred)
+	if err != nil {
+		checkError(err)
+	}
 	server := NewServer(runner, report)
 
 	hasTracker := false
@@ -58,9 +61,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	err := <-report
-	fmt.Println(err.Error())
-	os.Exit(1)
+	checkError(<-report)
 }
 
 func parseKeys(data string) *MultiNotifier {
@@ -71,4 +72,11 @@ func parseKeys(data string) *MultiNotifier {
 	}
 
 	return NewMultiNotifier(notifiers...)
+}
+
+func checkError(err error) {
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 }

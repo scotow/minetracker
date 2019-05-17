@@ -8,6 +8,14 @@ import (
 	. "github.com/scotow/skyblocktracker"
 )
 
+var (
+	mcrconPath = "mcrcon"
+)
+
+func SetMcrconPath(path string) {
+	mcrconPath = path
+}
+
 func NewMcrcon(cred Credentials) *McrconServer {
 	ms := new(McrconServer)
 	ms.cred = cred
@@ -29,7 +37,7 @@ func (ms *McrconServer) Run(cmd string) (string, error) {
 	}
 	args = append(args, cmd)
 
-	data, err := exec.Command("mcrcon", args...).Output()
+	data, err := exec.Command(mcrconPath, args...).Output()
 	if _, ok := err.(*exec.ExitError); !ok {
 		return "", err
 	}

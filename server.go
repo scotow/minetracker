@@ -3,6 +3,7 @@ package skyblocktracker
 import (
 	"os/exec"
 	"strconv"
+	"sync"
 
 	. "github.com/scotow/skyblocktracker/notifier"
 	. "github.com/scotow/skyblocktracker/tracker"
@@ -26,9 +27,13 @@ type Server struct {
 	port     int
 	password string
 	report   chan<- error
+	lock     sync.Mutex
 }
 
 func (s *Server) RunCommand(cmd string) (string, error) {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+
 	args := []string{"-c", "-H", s.hostname, "-P", strconv.Itoa(s.port)}
 	if s.password != "" {
 		args = append(args, "-p", s.password)

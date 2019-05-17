@@ -42,15 +42,11 @@ func main() {
 
 	hasTracker := false
 	if *flagConnInterval > 0 && *flagConnKey != "" {
-		_ = server.Add(NewConnectionTracker(*flagConnSelf, *flagConnInterval), parseKeys(*flagConnKey))
 		hasTracker = true
+		_ = server.Add(NewConnectionTracker(*flagConnSelf, *flagConnInterval), parseKeys(*flagConnKey))
 	}
 	if *flagEntityInterval > 0 && *flagEntityWait > 0 && *flagEntityId != "" && *flagEntityName != "" && *flagEntityKey != "" {
-		if hasTracker {
-			time.Sleep(time.Second * 5)
-		} else {
-			hasTracker = true
-		}
+		hasTracker = true
 		_ = server.Add(NewEntityTracker(*flagEntityId, *flagEntityName, *flagEntityInterval, *flagEntityWait), parseKeys(*flagEntityKey))
 	}
 

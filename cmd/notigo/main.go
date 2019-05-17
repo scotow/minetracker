@@ -14,8 +14,8 @@ import (
 )
 
 var (
-	flagHostname = flag.String("h", "", "mcrcon server hostname")
-	flagPort     = flag.Int("p", 0, "mcrcon server port")
+	flagHostname = flag.String("h", "127.0.0.1", "mcrcon server hostname")
+	flagPort     = flag.Int("p", 25575, "mcrcon server port")
 	flagPassword = flag.String("P", "", "mcrcon server password (optional)")
 	flagTitle    = flag.String("t", "Minecraft", "notigo notification title")
 

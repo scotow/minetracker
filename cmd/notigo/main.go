@@ -40,7 +40,7 @@ func main() {
 
 	report := make(chan error)
 	cred := Credentials{Hostname: *flagHostname, Port: *flagPort, Password: *flagPassword}
-	runner, err := NewDirect(cred)
+	runner, err := NewDirectRunner(cred)
 	if err != nil {
 		checkError(err)
 	}

@@ -36,6 +36,12 @@ func (ct *ConnectionTracker) Track(result string, notifier Notifier) error {
 		return err
 	}
 
+	// First track, don't notify.
+	if ct.last == nil {
+		ct.last = online
+		return nil
+	}
+
 	newConnect := FindNew(ct.last, online)
 	newDisconnect := FindNew(online, ct.last)
 

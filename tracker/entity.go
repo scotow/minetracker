@@ -8,20 +8,19 @@ import (
 	. "github.com/scotow/skyblocktracker/notifier"
 )
 
-func NewEntityTracker(id, name string, interval, wait time.Duration) *EntityTracker {
+func NewEntityTracker(id, name string, interval time.Duration) *EntityTracker {
 	et := new(EntityTracker)
 	et.id = id
 	et.name = name
 	et.interval = interval
-	et.wait = wait
 	return et
 }
 
 type EntityTracker struct {
-	id             string
-	name           string
-	interval, wait time.Duration
-	isLongInterval bool
+	id         string
+	name       string
+	interval   time.Duration
+	wasPresent bool
 }
 
 func (et *EntityTracker) Command() string {
@@ -29,19 +28,19 @@ func (et *EntityTracker) Command() string {
 }
 
 func (et *EntityTracker) Wait() time.Duration {
-	if et.isLongInterval {
-		et.isLongInterval = false
-		return et.wait
-	} else {
-		return et.interval
-	}
+	return et.interval
 }
 
 func (et *EntityTracker) Track(result string, notifier Notifier) error {
 	if len(strings.TrimSpace(result)) > 0 {
-		et.isLongInterval = true
+		if et.wasPresent {
+			return nil
+		}
+
+		et.wasPresent = true
 		return notifier.Notify(fmt.Sprintf("%s has spawned!", et.name))
 	}
 
+	et.wasPresent = false
 	return nil
 }

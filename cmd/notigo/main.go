@@ -24,7 +24,6 @@ var (
 	flagConnKey      = flag.String("k", "", "notigo key(s) for connections")
 
 	flagEntityInterval = flag.Duration("I", time.Second*30, "checking interval for entity")
-	flagEntityWait     = flag.Duration("w", time.Hour, "waiting interval")
 	flagEntityId       = flag.String("e", "", "entity id")
 	flagEntityName     = flag.String("E", "", "entity name")
 	flagEntityKey      = flag.String("K", "", "notigo key(s) for entity")
@@ -51,9 +50,9 @@ func main() {
 		hasTracker = true
 		_ = server.Add(NewConnectionTracker(*flagConnSelf, *flagConnInterval), parseKeys(*flagConnKey))
 	}
-	if *flagEntityInterval > 0 && *flagEntityWait > 0 && *flagEntityId != "" && *flagEntityName != "" && *flagEntityKey != "" {
+	if *flagEntityInterval > 0 && *flagEntityId != "" && *flagEntityName != "" && *flagEntityKey != "" {
 		hasTracker = true
-		_ = server.Add(NewEntityTracker(*flagEntityId, *flagEntityName, *flagEntityInterval, *flagEntityWait), parseKeys(*flagEntityKey))
+		_ = server.Add(NewEntityTracker(*flagEntityId, *flagEntityName, *flagEntityInterval), parseKeys(*flagEntityKey))
 	}
 
 	if !hasTracker {

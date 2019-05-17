@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	. "github.com/scotow/skyblocktracker/notifier"
 )
 
 func NewEntityTracker(id, name string, interval time.Duration) *EntityTracker {
@@ -31,16 +29,16 @@ func (et *EntityTracker) Wait() time.Duration {
 	return et.interval
 }
 
-func (et *EntityTracker) Track(result string, notifier Notifier) error {
+func (et *EntityTracker) Track(result string) (bool, string, error) {
 	if len(strings.TrimSpace(result)) > 0 {
 		if et.wasPresent {
-			return nil
+			return false, "", nil
 		}
 
 		et.wasPresent = true
-		return notifier.Notify(fmt.Sprintf("%s has spawned!", et.name))
+		return true, fmt.Sprintf("%s has spawned!", et.name), nil
 	}
 
 	et.wasPresent = false
-	return nil
+	return false, "", nil
 }

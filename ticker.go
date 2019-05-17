@@ -54,9 +54,16 @@ func (t *Ticker) tick() error {
 		return err
 	}
 
-	err = t.tracker.Track(result, t.notifier)
+	should, result, err := t.tracker.Track(result)
 	if err != nil {
 		return err
+	}
+
+	if should {
+		err = t.notifier.Notify(result)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

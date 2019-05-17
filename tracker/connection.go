@@ -6,7 +6,6 @@ import (
 	"time"
 
 	. "github.com/scotow/skyblocktracker/misc"
-	. "github.com/scotow/skyblocktracker/notifier"
 )
 
 func NewConnectionTracker(exclude string, interval time.Duration) *ConnectionTracker {
@@ -30,16 +29,16 @@ func (ct *ConnectionTracker) Wait() time.Duration {
 	return ct.interval
 }
 
-func (ct *ConnectionTracker) Track(result string, notifier Notifier) error {
+func (ct *ConnectionTracker) Track(result string) (bool, string, error) {
 	online, err := ParseOnlinePlayers(result)
 	if err != nil {
-		return err
+		return false, "", err
 	}
 
 	// First track, don't notify.
 	if ct.last == nil {
 		ct.last = online
-		return nil
+		return false, "", nil
 	}
 
 	newConnect := FindNew(ct.last, online)
@@ -48,16 +47,16 @@ func (ct *ConnectionTracker) Track(result string, notifier Notifier) error {
 	ct.last = online
 
 	if len(newConnect)+len(newDisconnect) > 0 {
-		return ct.excludeAndNotify(online, newConnect, newDisconnect, notifier)
+		return ct.excludeAndFormat(online, newConnect, newDisconnect)
 	}
 
-	return nil
+	return false, "", nil
 }
 
-func (ct *ConnectionTracker) excludeAndNotify(online, connect, disconnect []string, notifier Notifier) error {
+func (ct *ConnectionTracker) excludeAndFormat(online, connect, disconnect []string) (bool, string, error) {
 	if ct.exclude != "" {
 		if Contains(online, ct.exclude) {
-			return nil
+			return false, "", nil
 		}
 
 		connect = Remove(connect, ct.exclude)
@@ -73,8 +72,8 @@ func (ct *ConnectionTracker) excludeAndNotify(online, connect, disconnect []stri
 	}
 
 	if len(lines) > 0 {
-		return notifier.Notify(strings.Join(lines, "\n"))
+		return true, strings.Join(lines, "\n"), nil
 	}
 
-	return nil
+	return false, "", nil
 }

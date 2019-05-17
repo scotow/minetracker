@@ -4,6 +4,7 @@ import (
 	"time"
 
 	. "github.com/scotow/skyblocktracker/notifier"
+	. "github.com/scotow/skyblocktracker/runner"
 	. "github.com/scotow/skyblocktracker/tracker"
 )
 
@@ -11,7 +12,7 @@ type Ticker struct {
 	runner   Runner
 	tracker  Tracker
 	notifier Notifier
-	stop   chan struct{}
+	stop     chan struct{}
 }
 
 func NewTicker(runner Runner, tracker Tracker, notifier Notifier) *Ticker {
@@ -48,7 +49,7 @@ func (t *Ticker) Stop() {
 }
 
 func (t *Ticker) tick() error {
-	result, err := t.runner.RunCommand(t.tracker.Command())
+	result, err := t.runner.Run(t.tracker.Command())
 	if err != nil {
 		return err
 	}

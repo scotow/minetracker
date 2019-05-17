@@ -9,6 +9,7 @@ import (
 
 	. "github.com/scotow/skyblocktracker"
 	. "github.com/scotow/skyblocktracker/notifier"
+	. "github.com/scotow/skyblocktracker/runner"
 	. "github.com/scotow/skyblocktracker/tracker"
 )
 
@@ -38,7 +39,9 @@ func main() {
 	}
 
 	report := make(chan error)
-	server := NewServer(*flagHostname, *flagPort, *flagPassword, report)
+	cred := Credentials{Hostname: *flagHostname, Port: *flagPort, Password: *flagPassword}
+	runner := NewMcrcon(cred)
+	server := NewServer(runner, report)
 
 	hasTracker := false
 	if *flagConnInterval > 0 && *flagConnKey != "" {

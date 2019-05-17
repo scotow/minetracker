@@ -30,14 +30,16 @@ func main() {
 
 	report := make(chan error)
 	cred := Credentials{Hostname: *flagHostname, Port: *flagPort, Password: *flagPassword}
-	runner := NewMcrcon(cred)
+	runner, err := NewDirect(cred)
+	if err != nil {
+		checkError(err)
+	}
 	server := NewServer(runner, report)
 
 	notifier := NewConsoleNotifier()
 	_ = server.Add(NewConnectionTracker(*flagSelf, *flagInterval), notifier)
 
-	err := <-report
-	checkError(err)
+	checkError(<-report)
 }
 
 func checkError(err error) {

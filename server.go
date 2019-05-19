@@ -1,9 +1,9 @@
-package skyblocktracker
+package minetracker
 
 import (
-	. "github.com/scotow/skyblocktracker/notifier"
-	. "github.com/scotow/skyblocktracker/runner"
-	. "github.com/scotow/skyblocktracker/tracker"
+	. "github.com/scotow/minetracker/notifier"
+	. "github.com/scotow/minetracker/runner"
+	. "github.com/scotow/minetracker/tracker"
 )
 
 func NewServer(runner Runner, report chan<- error) *Server {

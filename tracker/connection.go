@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	. "github.com/scotow/skyblocktracker/misc"
+	. "github.com/scotow/minetracker/misc"
 )
 
 func NewConnectionTracker(exclude string, interval time.Duration) *ConnectionTracker {

@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	. "github.com/scotow/skyblocktracker"
-	. "github.com/scotow/skyblocktracker/notifier"
-	. "github.com/scotow/skyblocktracker/runner"
-	. "github.com/scotow/skyblocktracker/tracker"
+	. "github.com/scotow/minetracker"
+	. "github.com/scotow/minetracker/notifier"
+	. "github.com/scotow/minetracker/runner"
+	. "github.com/scotow/minetracker/tracker"
 )
 
 var (

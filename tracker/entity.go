@@ -22,7 +22,7 @@ type EntityTracker struct {
 }
 
 func (et *EntityTracker) Command() string {
-	return fmt.Sprintf("execute if entity @e[type=minecraft:%s] run list", et.id)
+	return fmt.Sprintf("execute if entity @e[type=minecraft:%s] run time query daytime", et.id)
 }
 
 func (et *EntityTracker) Wait() time.Duration {

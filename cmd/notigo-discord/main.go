@@ -20,7 +20,8 @@ var (
 	flagTitle    = flag.String("t", "Minecraft", "notigo notification title")
 
 	flagConnInterval  = flag.Duration("i", time.Second*30, "checking interval for connections")
-	flagConnSelf      = flag.String("s", "", "don't notify if this player is online or concerned")
+	flagConnExclude   = flag.String("x", "", "don't notify if this player is concerned")
+	flagConnSilence   = flag.String("s", "", "don't notify if this player is online")
 	flagConnNotigoKey = flag.String("n", "", "notigo key(s) for connections")
 
 	flagEntityInterval       = flag.Duration("I", time.Second*30, "checking interval for entity")
@@ -47,7 +48,7 @@ func main() {
 	}
 	server := NewServer(runner, report)
 
-	ct := NewConnectionTracker(*flagConnSelf, *flagConnInterval)
+	ct := NewConnectionTracker(*flagConnExclude, *flagConnSilence, *flagConnInterval)
 	et := NewEntityTracker(*flagEntityId, *flagEntityName, *flagEntityInterval)
 
 	hasTracker := false

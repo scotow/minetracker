@@ -17,7 +17,8 @@ var (
 	flagPort     = flag.Int("p", 25575, "mcrcon server port")
 	flagPassword = flag.String("P", "", "mcrcon server password (optional)")
 	flagInterval = flag.Duration("i", time.Second*30, "checking interval")
-	flagSelf     = flag.String("s", "", "don't notify if this player is online or concerned")
+	flagExclude  = flag.String("x", "", "don't notify if this player is concerned")
+	flagSilence  = flag.String("s", "", "don't notify if this player is online")
 )
 
 func main() {
@@ -37,7 +38,7 @@ func main() {
 	server := NewServer(runner, report)
 
 	notifier := NewConsoleNotifier()
-	_ = server.Add(NewConnectionTracker(*flagSelf, *flagInterval), notifier)
+	_ = server.Add(NewConnectionTracker(*flagExclude, *flagSilence, *flagInterval), notifier)
 
 	checkError(<-report)
 }

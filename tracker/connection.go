@@ -8,9 +8,10 @@ import (
 	. "github.com/scotow/minetracker/misc"
 )
 
-func NewConnectionTracker(exclude string, interval time.Duration) *ConnectionTracker {
+func NewConnectionTracker(exclude, silence string, interval time.Duration) *ConnectionTracker {
 	ct := new(ConnectionTracker)
 	ct.exclude = exclude
+	ct.silence = silence
 	ct.interval = interval
 	return ct
 }
@@ -18,6 +19,7 @@ func NewConnectionTracker(exclude string, interval time.Duration) *ConnectionTra
 type ConnectionTracker struct {
 	last     []string
 	exclude  string
+	silence  string
 	interval time.Duration
 }
 
@@ -54,11 +56,11 @@ func (ct *ConnectionTracker) Track(result string) (bool, string, error) {
 }
 
 func (ct *ConnectionTracker) excludeAndFormat(online, connect, disconnect []string) (bool, string, error) {
-	if ct.exclude != "" {
-		if Contains(online, ct.exclude) {
-			return false, "", nil
-		}
+	if ct.silence != "" && Contains(online, ct.silence) {
+		return false, "", nil
+	}
 
+	if ct.exclude != "" {
 		connect = Remove(connect, ct.exclude)
 		disconnect = Remove(disconnect, ct.exclude)
 	}

@@ -30,6 +30,6 @@ type DiscordNotifier struct {
 }
 
 func (dn *DiscordNotifier) Notify(message string) error {
-	_, err := dn.session.ChannelMessage(dn.channel, message)
+	_, err := dn.session.ChannelMessageSend(dn.channel, message)
 	return err
 }

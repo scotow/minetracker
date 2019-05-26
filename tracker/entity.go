@@ -42,7 +42,7 @@ func (et *EntityTracker) Track(result string) (bool, string, error) {
 		return false, "", nil
 	}
 
-	n, err := fmt.Sscanf(trimmed, "The time is %d.", new(int))
+	n, err := fmt.Sscanf(trimmed, "The time is %d", new(int))
 	if n != 1 || err != nil {
 		return false, "", ErrInvalidTestCommand
 	}

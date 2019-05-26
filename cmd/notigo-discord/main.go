@@ -51,18 +51,13 @@ func main() {
 	et := NewEntityTracker(*flagEntityId, *flagEntityName, *flagEntityInterval)
 
 	hasTracker := false
-	if cnn := connectionsNotigoNotifiers(); cnn != nil {
+	if cn := connectionsNotifier(); cn != nil {
 		hasTracker = true
-		_ = server.Add(ct, cnn)
+		_ = server.Add(ct, cn)
 	}
-
-	if enn := entityNotigoNotifiers(); enn != nil {
+	if en := entityNotifiers(); en != nil {
 		hasTracker = true
-		_ = server.Add(et, enn)
-	}
-	if edn := entityDiscordNotifier(); edn != nil {
-		hasTracker = true
-		_ = server.Add(et, edn)
+		_ = server.Add(et, en)
 	}
 
 	if !hasTracker {
@@ -73,12 +68,27 @@ func main() {
 	checkError(<-report)
 }
 
-func connectionsNotigoNotifiers() Notifier {
+func connectionsNotifier() Notifier {
 	if *flagConnInterval <= 0 || *flagConnNotigoKey == "" {
 		return nil
 	}
 
 	return parseNotigoKeys(*flagConnNotigoKey)
+}
+
+func entityNotifiers() Notifier {
+	enn := entityNotigoNotifiers()
+	edn := entityDiscordNotifier()
+
+	if enn != nil && edn != nil {
+		return NewMultiNotifier(enn, edn)
+	}
+
+	if enn != nil {
+		return enn
+	}
+
+	return edn
 }
 
 func entityNotigoNotifiers() Notifier {

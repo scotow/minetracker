@@ -11,6 +11,11 @@ var (
 	ErrCountMismatch = errors.New("number of player parsed is not matching")
 )
 
+var (
+	PlayerJoinString     = ", "
+	PlayerLastJoinString = " and "
+)
+
 func FindNew(old, new []string) []string {
 	diff := make([]string, 0)
 	for _, s := range new {
@@ -46,7 +51,7 @@ func FormatPlayerList(players []string) string {
 	case 1:
 		return players[0]
 	default:
-		return fmt.Sprintf("%s and %s", strings.Join(players[0:len(players)-1], ", "), players[len(players)-1])
+		return fmt.Sprintf("%s%s%s", strings.Join(players[:len(players)-1], PlayerJoinString), PlayerLastJoinString, players[len(players)-1])
 	}
 }
 

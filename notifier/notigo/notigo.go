@@ -1,4 +1,4 @@
-package notifier
+package notigo
 
 import "github.com/scotow/notigo"
 

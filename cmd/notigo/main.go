@@ -9,6 +9,7 @@ import (
 
 	. "github.com/scotow/minetracker"
 	. "github.com/scotow/minetracker/notifier"
+	. "github.com/scotow/minetracker/notifier/notigo"
 	. "github.com/scotow/minetracker/runner"
 	. "github.com/scotow/minetracker/tracker"
 )

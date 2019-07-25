@@ -1,4 +1,4 @@
-package notifier
+package discord
 
 import (
 	"github.com/bwmarrin/discordgo"

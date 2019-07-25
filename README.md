@@ -1,5 +1,7 @@
 # minetracker
 
+[![GoDoc](https://godoc.org/github.com/scotow/minetracker?status.svg)](https://godoc.org/github.com/scotow/minetracker)
+
 ## What?
 
 *minetracker* is a [Minecraft](https://www.minecraft.net) tracker library that uses the [RCON](https://wiki.vg/RCON) protocol implemented by the server to communicate, run command and parse the results.

@@ -4,6 +4,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+// Create a Discord Notifier.
+// token is the connection token provided by the Discord Developers Portal. channel is the channel where the messages will be published.
 func NewDiscordNotifier(token, channel string) (*DiscordNotifier, error) {
 	session, err := discordgo.New("Bot " + token)
 	if err != nil {
@@ -24,6 +26,7 @@ func NewDiscordNotifier(token, channel string) (*DiscordNotifier, error) {
 	return dn, nil
 }
 
+// A Discord notifier. This Notifier send the message on the specified server channel.
 type DiscordNotifier struct {
 	session *discordgo.Session
 	channel string

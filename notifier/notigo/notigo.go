@@ -2,6 +2,8 @@ package notigo
 
 import "github.com/scotow/notigo"
 
+// Create Notigo Notifier.
+// key is the secret key provided by IFTTT. title is the title of the Push Notification.
 func NewNotigoNotifier(key, title string) *NotigoNotifier {
 	nn := new(NotigoNotifier)
 	nn.key = notigo.Key(key)
@@ -9,6 +11,7 @@ func NewNotigoNotifier(key, title string) *NotigoNotifier {
 	return nn
 }
 
+// The Notigo Notifier use the scotow/notigo library to send IFTTT Push Notifications.
 type NotigoNotifier struct {
 	key   notigo.Key
 	title string

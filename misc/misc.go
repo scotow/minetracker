@@ -16,6 +16,7 @@ var (
 	PlayerLastJoinString = " and "
 )
 
+// Compare the two slices and return the elements that wasn't in the first slice.
 func FindNew(old, new []string) []string {
 	diff := make([]string, 0)
 	for _, s := range new {
@@ -26,6 +27,7 @@ func FindNew(old, new []string) []string {
 	return diff
 }
 
+// A simple function that indicates if a string is present in a slice of strings.
 func Contains(ss []string, s string) bool {
 	for _, v := range ss {
 		if v == s {
@@ -35,6 +37,7 @@ func Contains(ss []string, s string) bool {
 	return false
 }
 
+// Find and remove a specific string in a slice of strings.
 func Remove(s []string, r string) []string {
 	for i, v := range s {
 		if v == r {
@@ -44,6 +47,8 @@ func Remove(s []string, r string) []string {
 	return s
 }
 
+// A function that concatenate players string with a giver string, and an other string for final join.
+// Set the PlayerJoinString and PlayerLastJoinString exposed variables for customization.
 func FormatPlayerList(players []string) string {
 	switch len(players) {
 	case 0:
@@ -55,6 +60,7 @@ func FormatPlayerList(players []string) string {
 	}
 }
 
+// Parse a string of the "There are %d of a max 3 players online: a, b, c" format and return the list of online players.
 func ParseOnlinePlayers(data string) ([]string, error) {
 	fields := strings.Split(data, ":")
 	if len(fields) != 2 {

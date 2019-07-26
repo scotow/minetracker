@@ -8,6 +8,10 @@ import (
 	. "github.com/scotow/minetracker/misc"
 )
 
+// Create a ConnectionTracker.
+// exclude is optional player name that will not trigger any connect or disconnect event.
+// silence is optional player name that will prevent the Notifier to send a notification if the player is currently online.
+// interval is the interval waited between two checks.
 func NewConnectionTracker(exclude, silence string, interval time.Duration) *ConnectionTracker {
 	ct := new(ConnectionTracker)
 	ct.exclude = exclude
@@ -16,6 +20,7 @@ func NewConnectionTracker(exclude, silence string, interval time.Duration) *Conn
 	return ct
 }
 
+// A ConnectionTracker tracks online players and uses the last result to check if someone did connect or disconnect.
 type ConnectionTracker struct {
 	last     []string
 	exclude  string

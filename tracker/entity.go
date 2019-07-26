@@ -11,6 +11,10 @@ var (
 	ErrInvalidTestCommand = errors.New("invalid command result for entity testing")
 )
 
+// Create an EntityTracker.
+// id is the Minecraft ID of the entity (like minecraft:wandering_trader)
+// name is the name of entity used for the notification (like Wandering Trader)
+// interval is the interval waited between two checks.
 func NewEntityTracker(id, name string, interval time.Duration) *EntityTracker {
 	et := new(EntityTracker)
 	et.id = id
@@ -19,6 +23,7 @@ func NewEntityTracker(id, name string, interval time.Duration) *EntityTracker {
 	return et
 }
 
+// An EntityTracker tracks the spawn of an entity. It will only send a notification if the entity is present at the nth check and was not at the nth - 1 check.
 type EntityTracker struct {
 	id         string
 	name       string

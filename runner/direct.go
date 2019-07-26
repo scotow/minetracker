@@ -6,6 +6,8 @@ import (
 	"github.com/bearbin/mcgorcon"
 )
 
+// Create a DirectRunner using the specified Credentials. The DirectRunner immediately Dial the RCON server.
+// cred is the Credentials used to send commands.
 func NewDirectRunner(cred Credentials) (*DirectRunner, error) {
 	dr := new(DirectRunner)
 	dr.cred = cred
@@ -19,6 +21,7 @@ func NewDirectRunner(cred Credentials) (*DirectRunner, error) {
 	return dr, nil
 }
 
+// A DirectRunner used an external library (github.com/bearbin/mcgorcon) to send RCON command to the server.
 type DirectRunner struct {
 	cred   Credentials
 	client mcgorcon.Client
